@@ -10,4 +10,9 @@ public interface ProdutoService {
 
     Page<ProdutoDto> findAll(Pageable pageable);
 
+    public ProdutoDto create(ProdutoDto produtoDto);
+
+    public ProdutoDto update(ProdutoDto produtoDto);
+
+    public void delete(Long id);
 }

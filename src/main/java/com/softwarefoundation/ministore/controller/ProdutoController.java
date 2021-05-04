@@ -1,6 +1,7 @@
 package com.softwarefoundation.ministore.controller;
 
 import com.softwarefoundation.ministore.dto.ProdutoDto;
+import com.softwarefoundation.ministore.entity.Produto;
 import com.softwarefoundation.ministore.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,10 +14,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -51,6 +49,28 @@ public class ProdutoController {
         produtos.stream().forEach(p -> p.add(linkTo(methodOn(ProdutoController.class).findById(p.getId())).withSelfRel()));
         PagedModel<EntityModel<ProdutoDto>> pagedModel = assemblerPaged.toModel(produtos);
         return new ResponseEntity<>(pagedModel, HttpStatus.OK);
+    }
+
+    @PostMapping(produces = {"application/json","application/xml","application/x-yaml"},
+            consumes = {"application/json","application/xml","application/x-yaml"})
+    public ProdutoDto create(@RequestBody ProdutoDto produtoDto){
+        ProdutoDto dto = produtoService.create(produtoDto);
+        dto.add(linkTo(methodOn(ProdutoController.class).findById(produtoDto.getId())).withSelfRel());
+        return dto;
+    }
+
+    @PutMapping(produces = {"application/json","application/xml","application/x-yaml"},
+            consumes = {"application/json","application/xml","application/x-yaml"})
+    public ProdutoDto update(@RequestBody ProdutoDto produtoDto){
+        ProdutoDto dto = produtoService.update(produtoDto);
+        dto.add(linkTo(methodOn(ProdutoController.class).findById(produtoDto.getId())).withSelfRel());
+        return dto;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@RequestBody ProdutoDto produtoDto){
+        produtoService.delete(produtoDto.getId());
+        return ResponseEntity.ok().build();
     }
 
 }
