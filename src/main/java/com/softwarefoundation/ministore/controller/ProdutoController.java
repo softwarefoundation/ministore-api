@@ -55,7 +55,7 @@ public class ProdutoController {
             consumes = {"application/json","application/xml","application/x-yaml"})
     public ProdutoDto create(@RequestBody ProdutoDto produtoDto){
         ProdutoDto dto = produtoService.create(produtoDto);
-        dto.add(linkTo(methodOn(ProdutoController.class).findById(produtoDto.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(ProdutoController.class).findById(dto.getId())).withSelfRel());
         return dto;
     }
 
