@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@Controller
+@RestController
 @RequestMapping("/produto")
 public class ProdutoController {
 
@@ -50,7 +50,7 @@ public class ProdutoController {
         PagedModel<EntityModel<ProdutoDto>> pagedModel = assemblerPaged.toModel(produtos);
         return new ResponseEntity<>(pagedModel, HttpStatus.OK);
     }
-
+    
     @PostMapping(produces = {"application/json","application/xml","application/x-yaml"},
             consumes = {"application/json","application/xml","application/x-yaml"})
     public ProdutoDto create(@RequestBody ProdutoDto produtoDto){

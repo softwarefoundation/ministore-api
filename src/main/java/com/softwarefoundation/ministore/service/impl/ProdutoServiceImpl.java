@@ -3,6 +3,7 @@ package com.softwarefoundation.ministore.service.impl;
 import com.softwarefoundation.ministore.dto.ProdutoDto;
 import com.softwarefoundation.ministore.entity.Produto;
 import com.softwarefoundation.ministore.exceptions.ResourceNotFoundException;
+import com.softwarefoundation.ministore.message.ProdutoSendMessage;
 import com.softwarefoundation.ministore.repository.ProdutoRepository;
 import com.softwarefoundation.ministore.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,30 +17,28 @@ import java.util.Optional;
 public class ProdutoServiceImpl implements ProdutoService {
 
     private ProdutoRepository produtoRepository;
+    private ProdutoSendMessage produtoSendMessage;
 
     @Autowired
-    public ProdutoServiceImpl(ProdutoRepository produtoRepository) {
+    public ProdutoServiceImpl(ProdutoRepository produtoRepository, ProdutoSendMessage produtoSendMessage) {
         this.produtoRepository = produtoRepository;
+        this.produtoSendMessage = produtoSendMessage;
     }
 
     public ProdutoDto create(ProdutoDto produtoDto) {
-        Produto pr = produtoRepository.save(Produto.create(produtoDto));
-        ProdutoDto dto = ProdutoDto.create(pr);
-        return dto;
+        Produto produto = produtoRepository.save(produtoDto.toEntity());
+        produtoSendMessage.sendMessage(produto.toDto());
+        return produto.toDto();
     }
 
     public Page<ProdutoDto> findAll(Pageable pageable) {
         Page<Produto> page = produtoRepository.findAll(pageable);
-        return page.map(this::convertToProdutoDto);
-    }
-
-    private ProdutoDto convertToProdutoDto(Produto produto) {
-        return ProdutoDto.create(produto);
+        return page.map(p -> p.toDto());
     }
 
     public ProdutoDto findById(Long id) {
         var produto = produtoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
-        return ProdutoDto.create(produto);
+        return produto.toDto();
     }
 
 
@@ -48,7 +47,8 @@ public class ProdutoServiceImpl implements ProdutoService {
         if (!produtoOptional.isPresent()) {
             new ResourceNotFoundException("No records found for this ID");
         }
-        return ProdutoDto.create(produtoRepository.save(Produto.create(produtoDto)));
+        Produto produto = produtoRepository.save(produtoDto.toEntity());
+        return produto.toDto();
     }
 
     public void delete(Long id) {
