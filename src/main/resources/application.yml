@@ -32,5 +32,10 @@ ministore:
     exchange: ministore.exchange
     routingkey: ministore.produto.routingkey
 
+security:
+  jwt:
+    token:
+      secret-key: 3a8382882b7bdf58b7d3abcb3f6aa867
+
 # PATHS
 # http://localhost:8081/ministore-api/h2-console/
